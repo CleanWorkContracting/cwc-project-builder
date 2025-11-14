@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Clean Work Contracting Project Builder</title>
+  <link rel="stylesheet" href="style.css">
+  <meta name="color-scheme" content="dark light">
+</head>
+<body>
+<header class="topbar">
+  <div class="brand">
+    <img src="assets/logo.png" class="logo" alt="Clean Work Contracting">
+    <div>
+      <h1>Clean Work Contracting Project Builder</h1>
+      <div class="muted small">Inputs · Interior Paint · Exterior Paint · Flooring · Finishing · Summary · Client Quote</div>
+    </div>
+  </div>
+</header>
+<main class="wrap grid">
+  <nav class="nav">
+    <!-- Settings-only nav buttons (hidden until "Settings" is unlocked) -->
+    <button class="navbtn owner-nav" data-tab="Inputs">Inputs (Settings)</button>
+    <button class="navbtn owner-nav" data-tab="Summary">Summary (Internal)</button>
+    <button class="navsmall owner-nav" id="resetBtn">Reset to template</button>
+
+    <!-- Client-facing build tabs -->
+    <button class="navbtn" data-tab="Interior Paint">Interior Paint</button>
+    <button class="navbtn" data-tab="Exterior Paint">Exterior Paint</button>
+    <button class="navbtn" data-tab="Flooring">Flooring</button>
+    <button class="navbtn" data-tab="Finishing">Finishing</button>
+    <button class="navbtn" data-tab="Client Quote">Client Quote</button>
+
+    <div class="divider"></div>
+
+    <!-- Settings toggle -->
+    <button class="navsmall" id="ownerToggle">Settings</button>
+
+    <!-- File actions -->
+    <button class="navsmall" id="saveBtn">Save</button>
+    <button class="navsmall" id="loadBtn">Load</button>
+    <button class="navsmall" id="csvBtn">CSV</button>
+    <button class="navsmall" id="printBtn">Print</button>
+  </nav>
+  <section class="content">
+    <div id="tab-Inputs" class="tab card">
+      <h2>Settings</h2>
+      <div class="grid2">
+        <label>Client name<input id="clientName"></label>
+        <label>Project address<input id="projectAddress"></label>
+      </div>
+      <div class="grid3">
+        <label>Default crew rate ($/hr)<input id="crewRate" type="number" step="1"></label>
+        <label id="markupWrap">Adjustment factor %<input id="markup" type="number" step="0.1"></label>
+        <label>Sales tax %<input id="tax" type="number" step="0.1"></label>
+      </div>
+      <div class="grid3">
+        <label>Travel / fees ($)<input id="travelFees" type="number" step="1"></label>
+        <label>Disposal fee ($)<input id="disposalFee" type="number" step="1"></label>
+        <label>Discount ($)<input id="discount" type="number" step="1"></label>
+      </div>
+      <div class="grid3">
+        <label>Waste % (default)<input id="wastePct" type="number" step="0.1"></label>
+        <label class="toggle-label">
+          <input id="clientMode" type="checkbox">
+          Quote mode
+        </label>
+        <div></div>
+      </div>
+      <p class="muted medium" style="color:red;">
+        Please enable Quote Mode before building your project.
+      </p>
+    </div>
+
+    <div id="tab-Interior Paint" class="tab card"></div>
+    <div id="tab-Exterior Paint" class="tab card"></div>
+    <div id="tab-Flooring" class="tab card"></div>
+    <div id="tab-Finishing" class="tab card"></div>
+
+    <div id="tab-Summary" class="tab card">
+      <h2>Internal Summary</h2>
+      <div id="summaryTable"></div>
+      <hr>
+      <div class="sumrow"><span>Subtotal (pre-factor)</span><span id="subtotal">$0.00</span></div>
+      <div class="sumrow"><span>Adjustment portion</span><span id="markupAmt">$0.00</span></div>
+      <div class="sumrow"><span>Travel / fees</span><span id="travelAmt">$0.00</span></div>
+      <div class="sumrow"><span>Disposal fee</span><span id="disposalAmt">$0.00</span></div>
+      <div class="sumrow"><span>Discount</span><span id="discountAmt">($0.00)</span></div>
+      <div class="sumrow"><span>Tax</span><span id="taxAmt">$0.00</span></div>
+      <div class="sumrow total"><span>Client total</span><span id="grandTotal">$0.00</span></div>
+    </div>
+
+    <div id="tab-Client Quote" class="tab card">
+      <div class="quote-header">
+        <img src="assets/logo.png" class="qlogo" alt="Clean Work Contracting">
+        <div class="qinfo">
+          <div class="qtitle">Estimate - Valid for 30 Days</div>
+          <div class="qcontact">Clean Work Contracting · Pittsburgh, PA · info@cwpgh.com · cleanworkcontracting.com · (412) 848-9706</div>
+          <div id="pDate" class="qdate"></div>
+          <div id="pClient"></div>
+          <div id="pAddress"></div>
+        </div>
+      </div>
+      <div id="quoteBody"></div>
+      <div id="quoteTotals" class="quote-totals"></div>
+    </div>
+  </section>
+</main>
+<script src="app.js"></script>
+</body>
+</html>

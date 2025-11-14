@@ -1,0 +1,154 @@
+:root{
+  --bg:#111827;
+  --card:#141c2e;
+  --muted:#22304a;
+  --text:#e6e8ef;
+  --accent:#2b6cb0;
+  --soft:#2a3550;
+  --btn:#325ea8;
+}
+*{box-sizing:border-box}
+body{
+  margin:0;
+  font-family:system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;
+  background:var(--bg);
+  color:var(--text);
+}
+.topbar{
+  position:sticky;
+  top:0;
+  background:linear-gradient(180deg,#111827 70%,#11182700);
+  z-index:10;
+  border-bottom:1px solid var(--muted);
+  padding:10px 12px;
+}
+.brand{display:flex;gap:10px;align-items:center}
+.logo{width:56px;height:56px;border-radius:6px;object-fit:contain;background:#0e1422}
+.wrap{max-width:1200px;margin:0 auto}
+.grid{display:grid;grid-template-columns:260px 1fr;gap:12px;padding:12px}
+.nav{
+  background:var(--card);
+  border:1px solid var(--muted);
+  border-radius:12px;
+  padding:10px;
+  display:flex;
+  flex-direction:column;
+  gap:6px;
+}
+.navbtn,.navsmall{
+  padding:10px;
+  border-radius:10px;
+  border:1px solid var(--soft);
+  background:#141c2e;
+  color:var(--text);
+  text-align:left;
+  cursor:pointer;
+}
+.navbtn.active{border-color:var(--accent);background:#162139}
+.navsmall{font-size:12px}
+.owner-nav{display:none;font-size:12px;opacity:.9}
+.divider{height:1px;background:var(--muted);margin:8px 0}
+.content{min-height:60vh}
+.card{
+  background:var(--card);
+  border:1px solid var(--muted);
+  border-radius:12px;
+  padding:12px;
+}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px}
+@media (max-width:900px){
+  .grid{grid-template-columns:1fr}
+  .grid2,.grid3{grid-template-columns:1fr}
+}
+input,select,textarea{
+  width:100%;
+  padding:10px;
+  border-radius:10px;
+  border:1px solid var(--soft);
+  background:#0f172a;
+  color:#e9edf7;
+  font-size:16px;
+}
+textarea{min-height:60px;resize:vertical}
+h1{
+  font-size:20px;
+  margin:0;
+  letter-spacing:0.12em;
+  text-transform:uppercase;
+}
+h2{
+  margin:4px 0 8px 0;
+  letter-spacing:0.08em;
+  text-transform:uppercase;
+}
+.table{width:100%;border-collapse:collapse}
+.table th,.table td{
+  border-bottom:1px solid var(--muted);
+  padding:8px;
+  text-align:right;
+  vertical-align:top;
+}
+.table th:first-child,.table td:first-child{text-align:left}
+.row-help{color:#a8b0c5;font-size:12px;margin:4px 0 8px 0}
+.sumrow{display:flex;justify-content:space-between;margin:6px 0}
+.sumrow.total{font-weight:700;font-size:20px}
+.muted{color:#a8b0c5}
+.small{font-size:12px}
+.right{text-align:right}
+.btn{
+  background:var(--btn);
+  border:1px solid var(--soft);
+  color:white;
+  padding:6px 8px;
+  border-radius:10px;
+  cursor:pointer;
+  font-size:12px;
+}
+.chip{
+  display:inline-flex;
+  gap:6px;
+  align-items:center;
+  background:#0f172a;
+  border:1px solid var(--soft);
+  padding:6px 8px;
+  border-radius:8px;
+}
+.chip input[type=checkbox]{margin:0}
+.adv{opacity:.85}
+.quote-header{display:flex;gap:12px;align-items:center;margin-bottom:8px}
+.qlogo{width:110px;height:110px;object-fit:contain;background:white;border-radius:8px;padding:6px}
+.qinfo .qtitle{
+  font-size:22px;
+  font-weight:700;
+  letter-spacing:0.14em;
+  text-transform:uppercase;
+}
+.qinfo .qcontact{font-size:12px;color:#cfd5e6}
+.qdate{font-size:12px;color:#cfd5e6;margin-top:2px}
+.quote-totals{margin-top:8px}
+.quote-totals .sumrow{margin:4px 0}
+.quote-totals .grand{font-weight:700;font-size:18px}
+
+/* Dimensions helper UI */
+.qty-wrap{display:flex;flex-direction:column;align-items:flex-end;gap:4px}
+.dims{font-size:11px;color:#cfd5e6}
+.dims-toggle{display:flex;align-items:center;gap:4px;cursor:pointer}
+.dims-toggle input{margin:0}
+.dims-inputs{display:flex;align-items:center;gap:4px;margin-top:2px}
+.dims-inputs input{width:70px;padding:6px;font-size:12px}
+
+/* Client mode toggle label */
+.toggle-label{display:flex;align-items:center;gap:6px;font-size:13px}
+.toggle-label input{width:auto;padding:0}
+
+/* Advanced placeholders */
+.adv-placeholder{font-size:13px;color:#cfd5e6}
+
+/* Print */
+@media print{
+  body{background:white;color:black}
+  .topbar,.nav,.card:not(#tab-Client\ Quote){display:none}
+  #tab-Client\ Quote{border:none}
+  .qlogo{background:white}
+}
