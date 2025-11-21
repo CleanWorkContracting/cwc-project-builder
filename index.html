@@ -13,7 +13,7 @@
     <img src="assets/logo.png" class="logo" alt="Clean Work Contracting">
     <div>
       <h1>Clean Work Contracting Project Builder</h1>
-      <div class="muted small">Inputs · Interior Paint · Exterior Paint · Flooring · Finishing · Summary · Client Quote</div>
+      <div class="muted small">A cleaner, clearer way to bid your project</div>
     </div>
   </div>
 </header>
@@ -50,6 +50,11 @@
         <label>Project address<input id="projectAddress"></label>
       </div>
       <div class="grid3">
+        <label>Client phone<input id="clientPhone"></label>
+        <label>Client email<input id="clientEmail"></label>
+        <label>CWC rep<input id="cwcRep"></label>
+      </div>
+      <div class="grid3">
         <label>Default crew rate ($/hr)<input id="crewRate" type="number" step="1"></label>
         <label id="markupWrap">Adjustment factor %<input id="markup" type="number" step="0.1"></label>
         <label>Sales tax %<input id="tax" type="number" step="0.1"></label>
@@ -70,6 +75,10 @@
       <p class="muted medium" style="color:red;">
         Please enable Quote Mode before building your project.
       </p>
+      <div class="grid3">
+        <button id="inputsDoneBtn" class="primary-btn">Save changes and exit</button>
+        <div></div><div></div>
+      </div>
     </div>
 
     <div id="tab-Interior Paint" class="tab card"></div>
@@ -99,6 +108,9 @@
           <div id="pDate" class="qdate"></div>
           <div id="pClient"></div>
           <div id="pAddress"></div>
+          <div id="pPhone"></div>
+          <div id="pEmail"></div>
+          <div id="pRep"></div>
         </div>
       </div>
       <div id="quoteBody"></div>

@@ -7,6 +7,9 @@ const model = {
   inputs: {
     clientName: '',
     projectAddress: '',
+    clientPhone: '',
+    clientEmail: '',
+    cwcRep: '',
     crewRate: 55,
     markup: 15,
     tax: 0,
@@ -33,12 +36,17 @@ const model = {
         { desc: 'Custom item', unit: 'ea', qty: 0, matUnit: 0, hoursPerQty: 0, rateType: 'custom', rate: 55, custom: true, notes: '', dimL: 0, dimW: 0, useDims: false }
       ]
     },
-    {
+        {
       name: 'Flooring', sheetRate: null, useGlobalRate: true, lines: [
-        { desc: 'LVP install (sq ft)', unit: 'sqft', qty: 0, matUnit: 2.2, hoursPerQty: 0.002, rateType: 'crew', notes: '', dimL: 0, dimW: 0, useDims: false, custom:false },
-        { desc: 'Carpet install (sq ft)', unit: 'sqft', qty: 0, matUnit: 1.5, hoursPerQty: 0.0015, rateType: 'crew', notes: '', dimL: 0, dimW: 0, useDims: false, custom:false },
-        { desc: 'Floor prep (sq ft)', unit: 'sqft', qty: 0, matUnit: 0.6, hoursPerQty: 0.001, rateType: 'crew', notes: '', dimL: 0, dimW: 0, useDims: false, custom:false },
-        { desc: 'Custom item', unit: 'ea', qty: 0, matUnit: 0, hoursPerQty: 0, rateType: 'custom', rate: 55, custom: true, notes: '', dimL: 0, dimW: 0, useDims: false }
+        { desc: 'LVP – Standard (sq ft)', unit: 'sqft', qty: 0, matUnit: 2.25, hoursPerQty: 0.10, notes: '', dimL: 0, dimW: 0, dimH: 0, useDims: false, custom:false },
+        { desc: 'LVP – Premium (sq ft)', unit: 'sqft', qty: 0, matUnit: 3.25, hoursPerQty: 0.12, notes: '', dimL: 0, dimW: 0, dimH: 0, useDims: false, custom:false },
+        { desc: 'LVT (sq ft)', unit: 'sqft', qty: 0, matUnit: 2.75, hoursPerQty: 0.12, notes: '', dimL: 0, dimW: 0, dimH: 0, useDims: false, custom:false },
+        { desc: 'Laminate / Pergo – Standard (sq ft)', unit: 'sqft', qty: 0, matUnit: 1.75, hoursPerQty: 0.12, notes: '', dimL: 0, dimW: 0, dimH: 0, useDims: false, custom:false },
+        { desc: 'Laminate / Pergo – Premium (sq ft)', unit: 'sqft', qty: 0, matUnit: 3.25, hoursPerQty: 0.15, notes: '', dimL: 0, dimW: 0, dimH: 0, useDims: false, custom:false },
+        { desc: 'Engineered Hardwood (sq ft)', unit: 'sqft', qty: 0, matUnit: 4.50, hoursPerQty: 0.20, notes: '', dimL: 0, dimW: 0, dimH: 0, useDims: false, custom:false },
+        { desc: 'Ceramic Tile (sq ft)', unit: 'sqft', qty: 0, matUnit: 2.50, hoursPerQty: 0.25, notes: '', dimL: 0, dimW: 0, dimH: 0, useDims: false, custom:false },
+        { desc: 'Floor prep (sq ft)', unit: 'sqft', qty: 0, matUnit: 0.60, hoursPerQty: 0.05, notes: '', dimL: 0, dimW: 0, dimH: 0, useDims: false, custom:false },
+        { desc: 'Custom item', unit: 'ea', qty: 0, matUnit: 0, hoursPerQty: 0, notes: '', dimL: 0, dimW: 0, dimH: 0, useDims: false, custom: true }
       ]
     },
     {
@@ -73,7 +81,17 @@ function calcLine(line, sheet) {
   const rate = (line.rateType === 'crew') ? effectiveSheetRate(sheet) : Number(line.rate || 0) || effectiveSheetRate(sheet);
 
   if (line.useDims && (line.unit || '').toLowerCase() === 'sqft') {
-    const area = Number(line.dimL || 0) * Number(line.dimW || 0);
+    const desc = (line.desc || '').toLowerCase();
+    const L = Number(line.dimL || 0);
+    const W = Number(line.dimW || 0);
+    const H = Number(line.dimH || 0);
+    let area = 0;
+    if (desc.includes('walls (sq ft)') || desc.includes('siding (sq ft)')) {
+      // Perimeter (2L + 2W) * height
+      area = 2 * (L + W) * H;
+    } else {
+      area = L * W;
+    }
     line.qty = area;
   }
 
@@ -132,7 +150,7 @@ function displayLineTotal(line, sheet) {
 
 // Render Inputs / Settings
 function mountInputs() {
-  ['clientName', 'projectAddress', 'crewRate', 'markup', 'tax', 'travelFees', 'disposalFee', 'discount', 'wastePct'].forEach(id => {
+  ['clientName', 'projectAddress', 'clientPhone', 'clientEmail', 'cwcRep', 'crewRate', 'markup', 'tax', 'travelFees', 'disposalFee', 'discount', 'wastePct'].forEach(id => {
     const el = $(id);
     if (!el) return;
     el.value = model.inputs[id] ?? (
@@ -141,7 +159,7 @@ function mountInputs() {
       id === 'wastePct' ? 5 : 0
     );
     el.oninput = e => {
-      const val = ['clientName', 'projectAddress'].includes(id) ? e.target.value : Number(e.target.value || 0);
+      const val = ['clientName', 'projectAddress', 'clientPhone', 'clientEmail', 'cwcRep'].includes(id) ? e.target.value : Number(e.target.value || 0);
       model.inputs[id] = val;
       if (id === 'crewRate') renderSheets();
       renderSummary();
@@ -230,12 +248,16 @@ function makeSheetTable(sheet) {
           <div class="dims">
             <label class="dims-toggle">
               <input type="checkbox" data-i="${i}" data-dimtoggle="1" ${l.useDims ? 'checked' : ''}>
-              Use L×W
+              Dimensions
             </label>
             <div class="dims-inputs" ${l.useDims ? '' : 'style="display:none"'}>
               <input type="number" step="0.01" placeholder="L" value="${l.dimL || ''}" data-i="${i}" data-f="dimL">
               <span>×</span>
               <input type="number" step="0.01" placeholder="W" value="${l.dimW || ''}" data-i="${i}" data-f="dimW">
+              ${((l.desc || '').includes('Walls (sq ft)') || (l.desc || '').includes('Siding (sq ft)')) ? `
+                <span>×</span>
+                <input type="number" step="0.01" placeholder="H" value="${l.dimH || ''}" data-i="${i}" data-f="dimH">
+              ` : ``}
             </div>
           </div>` : ''}
         </div>
@@ -329,14 +351,23 @@ function makeSheetTable(sheet) {
     if (!f) return;
     inp.oninput = e => {
       let val = e.target.value;
-      if (['qty', 'matUnit', 'hoursPerQty', 'rate', 'dimL', 'dimW'].includes(f)) {
+      if (['qty', 'matUnit', 'hoursPerQty', 'rate', 'dimL', 'dimW', 'dimH'].includes(f)) {
         val = Number(val || 0);
       }
       sheet.lines[i][f] = val;
 
-      if (f === 'dimL' || f === 'dimW') {
+      if (f === 'dimL' || f === 'dimW' || f === 'dimH') {
         const line = sheet.lines[i];
-        const area = Number(line.dimL || 0) * Number(line.dimW || 0);
+        const desc = (line.desc || '').toLowerCase();
+        const L = Number(line.dimL || 0);
+        const W = Number(line.dimW || 0);
+        const H = Number(line.dimH || 0);
+        let area = 0;
+        if (desc.includes('walls (sq ft)') || desc.includes('siding (sq ft)')) {
+          area = 2 * (L + W) * H;
+        } else {
+          area = L * W;
+        }
         line.qty = area;
         const row = tb.querySelectorAll('tr')[i];
         if (row) {
@@ -437,6 +468,9 @@ function renderQuote() {
   $('pDate').textContent = new Date().toLocaleDateString();
   $('pClient').textContent = "Client: " + (model.inputs.clientName || '');
   $('pAddress').textContent = "Address: " + (model.inputs.projectAddress || '');
+  if ($('pPhone')) $('pPhone').textContent = model.inputs.clientPhone ? "Phone: " + model.inputs.clientPhone : "";
+  if ($('pEmail')) $('pEmail').textContent = model.inputs.clientEmail ? "Email: " + model.inputs.clientEmail : "";
+  if ($('pRep')) $('pRep').textContent = model.inputs.cwcRep ? "CWC Rep: " + model.inputs.cwcRep : "";
 
   const allLines = [];
   per.forEach(group => {
@@ -533,35 +567,73 @@ function loadLocal() { try { const d = JSON.parse(localStorage.getItem('cwc_proj
 function boot(skipLoad) {
   if (!skipLoad) loadLocal();
   mountInputs();
-  ['Interior Paint', 'Exterior Paint', 'Flooring', 'Finishing'].forEach(n => makeSheetTable(model.sheets.find(s => s.name === n)));
+  ['Interior Paint', 'Exterior Paint', 'Flooring', 'Finishing'].forEach(n => {
+    const sheet = model.sheets.find(s => s.name === n);
+    if (sheet) makeSheetTable(sheet);
+  });
   renderSheets();
   renderSummary();
   renderQuote();
   setActive('Interior Paint');
 
-  document.querySelectorAll('.navbtn').forEach(b => b.onclick = () => setActive(b.dataset.tab));
+  // Tab navigation
+  document.querySelectorAll('.navbtn').forEach(b => {
+    b.onclick = () => setActive(b.dataset.tab);
+  });
 
+  // Owner-only tabs (Inputs, Summary, Reset) start hidden
+  document.querySelectorAll('.owner-nav').forEach(btn => {
+    btn.style.display = ownerVisible ? 'inline-block' : 'none';
+  });
+
+  // Settings button to unlock Inputs/Summary
   const ownerToggle = document.getElementById('ownerToggle');
   if (ownerToggle) {
     ownerToggle.onclick = () => {
       const code = prompt('Enter settings code:');
       if (code !== 'Joeyhenny8') return;
-      ownerVisible = !ownerVisible;
+      ownerVisible = true;
       document.querySelectorAll('.owner-nav').forEach(btn => {
-        btn.style.display = ownerVisible ? 'block' : 'none';
+        btn.style.display = 'inline-block';
       });
+      setActive('Inputs');
     };
   }
 
+  // Triple-click reset button (only visible when Inputs/Settings are unlocked)
   const resetBtn = document.getElementById('resetBtn');
   if (resetBtn) {
+    let resetClicks = 0;
     resetBtn.onclick = () => {
-      if (!confirm('Reset everything to the blank template? This cannot be undone.')) return;
+      resetClicks += 1;
+      if (resetClicks < 3) {
+        const remaining = 3 - resetClicks;
+        alert(`Press ${remaining} more time${remaining === 1 ? '' : 's'} to reset everything to the blank template.`);
+        return;
+      }
       const fresh = JSON.parse(JSON.stringify(initialModel));
       model.inputs = fresh.inputs;
       model.sheets = fresh.sheets;
       saveLocal();
+      resetClicks = 0;
       boot(true);
+    };
+  }
+
+  // Save & Exit button on Inputs tab – bakes settings, hides owner tabs, returns to Interior
+  const inputsDoneBtn = document.getElementById('inputsDoneBtn');
+  if (inputsDoneBtn) {
+    inputsDoneBtn.onclick = () => {
+      // settings already bound via mountInputs oninput handlers
+      saveLocal();
+      renderSheets();
+      renderSummary();
+      renderQuote();
+      ownerVisible = false;
+      document.querySelectorAll('.owner-nav').forEach(btn => {
+        btn.style.display = 'none';
+      });
+      setActive('Interior Paint');
     };
   }
 
